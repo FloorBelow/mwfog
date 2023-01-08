@@ -1,0 +1,449 @@
+uniform_float sunH {
+    default = 0.0;
+    min = 0;
+    max = 1;
+    step = 0.01;
+    display_name = "Sun H";
+}
+
+uniform_float sunS {
+    default = 0.0;
+    min = 0;
+    max = 1;
+    step = 0.02;
+    display_name = "Sun S";
+}
+
+uniform_float sunV {
+    default = 1.0;
+    min = 0;
+    max = 1;
+    step = 0.02;
+    display_name = "Sun V";
+}
+
+uniform_float lowH {
+    default = 0.0;
+    min = 0;
+    max = 1;
+    step = 0.01;
+    display_name = "Low H";
+}
+
+uniform_float lowS {
+    default = 0.0;
+    min = 0;
+    max = 1;
+    step = 0.02;
+    display_name = "Low S";
+}
+
+uniform_float lowV {
+    default = 1.0;
+    min = 0;
+    max = 1;
+    step = 0.02;
+    display_name = "Low V";
+}
+
+uniform_float farH {
+    default = 0.0;
+    min = 0;
+    max = 1;
+    step = 0.01;
+    display_name = "Far H";
+}
+
+uniform_float farS {
+    default = 0.0;
+    min = 0;
+    max = 1;
+    step = 0.02;
+    display_name = "Far S";
+}
+
+uniform_float farV {
+    default = 1.0;
+    min = 0;
+    max = 1;
+    step = 0.02;
+    display_name = "Far V";
+}
+
+
+uniform_int lowDist {
+    header = "Fog";
+    default = 6;
+    min = 1;
+    max = 64;
+    step = 1;
+    display_name = "Low Fog Dist";
+    description = "A";
+}
+
+uniform_int farDist {
+    default = 12;
+    min = 1;
+    max = 64;
+    step = 1;
+    display_name = "Far Fog Dist";
+    description = "A";
+}
+
+uniform_float lowFadeStart {
+    default = 0;
+    min = 0;
+    max = 8000;
+    step = 200;
+    display_name = "Low Fog End";
+    description = "A";
+}
+
+uniform_float lowFadeLength {
+    default = 15000.0;
+    min = 0;
+    max = 60000;
+    step = 1000;
+    display_name = "Low Fog Fade";
+    description = "A";
+}
+
+uniform_float lowMax {
+    default = 0.8;
+    min = 0;
+    max = 1;
+    step = 0.05;
+    display_name = "Low Fog Max";
+    description = "A";
+}
+
+
+uniform_float farMax {
+    default = 0.8;
+    min = 0;
+    max = 1;
+    step = 0.05;
+    display_name = "Far Fog Max";
+    description = "A";
+}
+
+uniform_float farBlend {
+    default = 1;
+    min = 0;
+    max = 1;
+    step = 0.05;
+    display_name = "Far Fog Blend";
+    description = "A";
+}
+
+uniform_float skyBlend {
+    default = 1;
+    min = 0.2;
+    max = 5;
+    step = 0.2;
+    display_name = "Sky Blend";
+    description = "A";
+}
+
+fragment main {
+
+    vec4 SkyColors[40]=vec4[](
+        vec4(0.4588235,0.5529412,0.6431373,1),
+        vec4(0.372549,0.5294118,0.7960784,1),
+        vec4(0.2196078,0.3490196,0.5058824,1),
+        vec4(0.03529412,0.03921569,0.04313726,1),
+        vec4(0.4941176,0.6196079,0.6784314,1),
+        vec4(0.4588235,0.627451,0.8431373,1),
+        vec4(0.4352941,0.4470588,0.6235294,1),
+        vec4(0.03529412,0.03921569,0.04313726,1),
+        vec4(0.772549,0.7450981,0.7058824,1),
+        vec4(0.7215686,0.827451,0.8941177,1),
+        vec4(0.5568628,0.6235294,0.6901961,1),
+        vec4(0.07058824,0.09019608,0.1098039,1),
+        vec4(0.1372549,0.1411765,0.1529412,1),
+        vec4(0.3803922,0.4078431,0.4509804,1),
+        vec4(0.1372549,0.1411765,0.1529412,1),
+        vec4(0.07450981,0.07843138,0.08627451,1),
+        vec4(0.2784314,0.2901961,0.2941177,1),
+        vec4(0.454902,0.4705882,0.4784314,1),
+        vec4(0.2862745,0.2862745,0.2862745,1),
+        vec4(0.09411765,0.09803922,0.1019608,1),
+        vec4(0.3568628,0.3882353,0.4156863,1),
+        vec4(0.5607843,0.572549,0.5843138,1),
+        vec4(0.4235294,0.4509804,0.4745098,1),
+        vec4(0.07450981,0.08627451,0.09803922,1),
+        vec4(0.3568628,0.2196078,0.2,1),
+        vec4(0.4862745,0.2862745,0.227451,1),
+        vec4(0.4156863,0.2156863,0.1568628,1),
+        vec4(0.07843138,0.08235294,0.08627451,1),
+        vec4(0.3529412,0.1372549,0.1372549,1),
+        vec4(0.3529412,0.1372549,0.1372549,1),
+        vec4(0.3607843,0.1294118,0.1294118,1),
+        vec4(0.172549,0.05490196,0.05490196,1),
+        vec4(0.4156863,0.3568628,0.3568628,1),
+        vec4(0.6,0.6196079,0.6509804,1),
+        vec4(0.3764706,0.4509804,0.5254902,1),
+        vec4(0.1215686,0.1372549,0.1529412,1),
+        vec4(0.3568628,0.3882353,0.4156863,1),
+        vec4(0.4745098,0.5215687,0.5686275,1),
+        vec4(0.4235294,0.4509804,0.4745098,1),
+        vec4(0.1058824,0.1137255,0.1215686,1)
+    );
+
+    vec4 FogColors[40]=vec4[](
+        vec4(1,0.7411765,0.6156863,1),
+        vec4(0.8078431,0.8901961,1,1),
+        vec4(1,0.7411765,0.6156863,1),
+        vec4(0.03529412,0.03921569,0.04313726,1),
+        vec4(1,0.8117647,0.5843138,1),
+        vec4(0.9607843,0.9215686,0.8784314,1),
+        vec4(1,0.6078432,0.4156863,1),
+        vec4(0.03529412,0.03921569,0.04313726,1),
+        vec4(0.6784314,0.6431373,0.5803922,1),
+        vec4(0.5882353,0.7333333,0.8196079,1),
+        vec4(0.4431373,0.5294118,0.6156863,1),
+        vec4(0.07450981,0.09411765,0.1137255,1),
+        vec4(0.2745098,0.2901961,0.3333333,1),
+        vec4(0.3803922,0.4078431,0.4509804,1),
+        vec4(0.2745098,0.2901961,0.3333333,1),
+        vec4(0.07450981,0.07843138,0.08627451,1),
+        vec4(0.2784314,0.2901961,0.2941177,1),
+        vec4(0.454902,0.4705882,0.4784314,1),
+        vec4(0.2862745,0.2862745,0.2862745,1),
+        vec4(0.09411765,0.09803922,0.1019608,1),
+        vec4(0.3568628,0.3882353,0.4156863,1),
+        vec4(0.5607843,0.572549,0.5843138,1),
+        vec4(0.4235294,0.4509804,0.4745098,1),
+        vec4(0.07450981,0.08627451,0.09803922,1),
+        vec4(0.3568628,0.2196078,0.2,1),
+        vec4(0.4862745,0.2862745,0.227451,1),
+        vec4(0.4156863,0.2156863,0.1568628,1),
+        vec4(0.07843138,0.08235294,0.08627451,1),
+        vec4(0.3529412,0.1372549,0.1372549,1),
+        vec4(0.5019608,0.07450981,0.07450981,1),
+        vec4(0.3607843,0.1294118,0.1294118,1),
+        vec4(0.172549,0.05490196,0.05490196,1),
+        vec4(0.4156863,0.3568628,0.3568628,1),
+        vec4(0.6,0.6196079,0.6509804,1),
+        vec4(0.3764706,0.4509804,0.5254902,1),
+        vec4(0.1215686,0.1372549,0.1529412,1),
+        vec4(0.3568628,0.3882353,0.4156863,1),
+        vec4(0.4745098,0.5215687,0.5686275,1),
+        vec4(0.4235294,0.4509804,0.4745098,1),
+        vec4(0.08235294,0.09411765,0.1098039,1)
+    );
+
+    vec4 AmbientColors[40]=vec4[](
+        vec4(0.1843137,0.2588235,0.3764706,1),
+        vec4(0.5372549,0.5490196,0.627451,1),
+        vec4(0.2666667,0.2941177,0.3764706,1),
+        vec4(0.1254902,0.1372549,0.1647059,1),
+        vec4(0.2588235,0.2901961,0.3411765,1),
+        vec4(0.5372549,0.5686275,0.627451,1),
+        vec4(0.2784314,0.3137255,0.3607843,1),
+        vec4(0.1254902,0.1529412,0.2117647,1),
+        vec4(0.1882353,0.1686275,0.145098,1),
+        vec4(0.3607843,0.427451,0.4705882,1),
+        vec4(0.1137255,0.2078431,0.2980392,1),
+        vec4(0.1098039,0.1294118,0.1529412,1),
+        vec4(0.2117647,0.2117647,0.2117647,1),
+        vec4(0.3529412,0.3529412,0.3529412,1),
+        vec4(0.2117647,0.2117647,0.2117647,1),
+        vec4(0.1921569,0.2,0.2117647,1),
+        vec4(0.3803922,0.3529412,0.345098,1),
+        vec4(0.4117647,0.4313726,0.4431373,1),
+        vec4(0.345098,0.3803922,0.3803922,1),
+        vec4(0.1960784,0.2156863,0.2627451,1),
+        vec4(0.3294118,0.345098,0.3607843,1),
+        vec4(0.3647059,0.3764706,0.4117647,1),
+        vec4(0.3254902,0.3019608,0.2941177,1),
+        vec4(0.2235294,0.2352941,0.2588235,1),
+        vec4(0.2117647,0.1647059,0.145098,1),
+        vec4(0.2941177,0.1921569,0.1607843,1),
+        vec4(0.1882353,0.1529412,0.1372549,1),
+        vec4(0.1411765,0.1647059,0.1921569,1),
+        vec4(0.2392157,0.1568628,0.1568628,1),
+        vec4(0.3098039,0.2117647,0.2117647,1),
+        vec4(0.2392157,0.1568628,0.1568628,1),
+        vec4(0.2196078,0.227451,0.2431373,1),
+        vec4(0.3607843,0.3294118,0.3294118,1),
+        vec4(0.3647059,0.3764706,0.4117647,1),
+        vec4(0.2745098,0.3098039,0.3411765,1),
+        vec4(0.1921569,0.227451,0.2666667,1),
+        vec4(0.3294118,0.345098,0.3607843,1),
+        vec4(0.3647059,0.3764706,0.4117647,1),
+        vec4(0.3254902,0.3019608,0.2941177,1),
+        vec4(0.2078431,0.2431373,0.2745098,1)
+    );
+
+    vec4 SunColors[40]=vec4[](
+        vec4(0.9490196,0.6235294,0.4666667,1),
+        vec4(1,0.9882353,0.9333333,1),
+        vec4(1,0.4470588,0.3098039,1),
+        vec4(0.2313726,0.3803922,0.6901961,1),
+        vec4(0.945098,0.6941177,0.3882353,1),
+        vec4(1,0.9254902,0.8666667,1),
+        vec4(1,0.3490196,0,1),
+        vec4(0.3019608,0.3568628,0.4862745,1),
+        vec4(0.6941177,0.6352941,0.5372549,1),
+        vec4(0.4352941,0.5137255,0.5921569,1),
+        vec4(0.4901961,0.6156863,0.7411765,1),
+        vec4(0.3176471,0.3921569,0.4666667,1),
+        vec4(0.3568628,0.3882353,0.4784314,1),
+        vec4(0.5411765,0.5647059,0.6078432,1),
+        vec4(0.3764706,0.3960784,0.4588235,1),
+        vec4(0.2156863,0.2980392,0.4313726,1),
+        vec4(0.5137255,0.4784314,0.4705882,1),
+        vec4(0.5843138,0.6156863,0.6666667,1),
+        vec4(0.4705882,0.4941176,0.5137255,1),
+        vec4(0.1960784,0.2431373,0.3960784,1),
+        vec4(0.3411765,0.4901961,0.6392157,1),
+        vec4(0.6392157,0.6627451,0.7176471,1),
+        vec4(0.3333333,0.4039216,0.6156863,1),
+        vec4(0.1254902,0.2117647,0.3921569,1),
+        vec4(0.7215686,0.3568628,0.2784314,1),
+        vec4(0.8941177,0.5450981,0.4470588,1),
+        vec4(0.7254902,0.3372549,0.2235294,1),
+        vec4(0.2117647,0.2588235,0.2901961,1),
+        vec4(0.7058824,0.3058824,0.3058824,1),
+        vec4(0.8784314,0.3294118,0.3294118,1),
+        vec4(0.7058824,0.3058824,0.3058824,1),
+        vec4(0.2392157,0.3568628,0.5607843,1),
+        vec4(0.5529412,0.427451,0.427451,1),
+        vec4(0.6392157,0.6627451,0.7176471,1),
+        vec4(0.3960784,0.4745098,0.5529412,1),
+        vec4(0.2156863,0.2588235,0.3019608,1),
+        vec4(0.4470588,0.5019608,0.572549,1),
+        vec4(0.6392157,0.6627451,0.7176471,1),
+        vec4(0.4156863,0.4470588,0.5333334,1),
+        vec4(0.2235294,0.2588235,0.2901961,1)
+    );
+
+
+    omw_In vec2 omw_TexCoord;
+
+    #define HORIZON 100000000
+
+    float dist_at(vec2 uv) {
+        float depth = omw_GetDepth(uv);
+        mat4 inv = omw.invViewMatrix * omw.invProjectionMatrix;
+        vec4 clip_space = vec4((uv * 2.0 - 1.0) * vec2(1, 1), 1 - depth, 1.0);
+        vec4 view_space = inv * clip_space;
+        return view_space.z / view_space.w;
+    }
+
+    vec3 wpos_at(vec2 uv) {
+        float depth = omw_GetDepth(uv);
+        #if (OMW_REVERSE_Z == 1)
+            float flipped_depth = 1.0 - depth;
+        #else
+            float flipped_depth = depth * 2.0 - 1.0;
+        #endif
+        vec4 clip_space = vec4(uv * 2.0 - 1.0, flipped_depth, 1.0);
+        if (depth == 1) {
+            vec4 world_space = omw.invViewMatrix * ((omw.invProjectionMatrix * clip_space) * vec4(1, 1, 1, 0));
+            return normalize(world_space.xyz) * HORIZON;
+        } else {
+            vec4 world_space = omw.invViewMatrix * (omw.invProjectionMatrix * clip_space);
+            return world_space.xyz / world_space.w;
+        }
+    }
+
+    vec4 lerp(vec4 a, vec4 b, float f ) { 
+        return a * (1 - f) + b * f;
+    }
+
+    vec4 hsv2rgb(float h, float s, float v ) {
+        vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+        vec3 p = abs(fract(vec3(h,h,h) + K.xyz) * 6.0 - K.www);
+        vec3 res = v * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), s);
+        return vec4(res.x, res.y, res.z, 1);
+    }
+
+
+    vec4 GetAmbColor() {
+        if(omw.gameHour < 6) return AmbientColors[omw.weatherID * 4 + 3];
+        else if(omw.gameHour < 8) return AmbientColors[omw.weatherID * 4];
+        else if(omw.gameHour < 18) return AmbientColors[omw.weatherID * 4 + 1];
+        else if(omw.gameHour < 20) return AmbientColors[omw.weatherID * 4 + 2];
+        return AmbientColors[omw.weatherID * 4 + 3];
+    }
+
+    vec4 GetSkyColor() {
+        if(omw.gameHour < 6) return SkyColors[omw.weatherID * 4 + 3];
+        else if(omw.gameHour < 8) return SkyColors[omw.weatherID * 4];
+        else if(omw.gameHour < 18) return SkyColors[omw.weatherID * 4 + 1];
+        else if(omw.gameHour < 20) return SkyColors[omw.weatherID * 4 + 2];
+        return SkyColors[omw.weatherID * 4 + 3];
+    }
+
+
+    vec4 newfog(vec4 col, vec3 wpos, float max_dist, vec3 dir) {
+
+
+        float fogColFac = (dot(dir, omw.sunPos.xyz) + 1) / 2;
+
+        //col = vec4(0,0,0,1);
+        if(wpos.z > 40000) return col;
+        float farFac = min(max_dist / (farDist * 8192), 1);
+        farFac = 1 - (1-farFac) * (1-farFac);
+
+
+        //vec4 farCol = lerp(hsv2rgb(farH, farS, farV), hsv2rgb(sunH, sunS, sunV), fogColFac * farBlend);
+        vec4 farCol = lerp(GetAmbColor(), omw.sunColor, fogColFac * farBlend);
+        col = lerp(col, farCol, farFac * farMax);
+
+        //col = lerp(col, omw.fogColor * vec4(0.85, 0.92, 1, 1), farFac);
+
+        float lowDistFac = min(max_dist / (lowDist * 8192), 1);
+        float lowHeightFac = clamp(1 - (wpos.z - lowFadeStart) / lowFadeLength, 0, 1);
+        lowDistFac = 1 - (1-lowDistFac) * (1-lowDistFac);
+        float lowFac =  lowDistFac * lowHeightFac * lowHeightFac;
+
+        //lowHeightFac = lowHeightFac * lowHeightFac * lowFac;
+        //return omw.fogColor * vec4(lowFac, lowFac, lowFac, 1);
+        
+        //vec4 fogCol = lerp(hsv2rgb(lowH, lowS, lowV), hsv2rgb(sunH, sunS, sunV), fogColFac);
+        vec4 fogCol = lerp(vec4(1,0,0,1), vec4(0,0,1,1), fogColFac);
+        col = lerp(col, fogCol, lowFac * lowMax);
+
+        return col;
+    }
+
+    vec4 sky_blend(vec4 col, vec3 wpos, float max_dist, vec3 dir) {
+        float sky_angle = max(0, 1 - dot(dir, vec3(0,0,1) * skyBlend));
+        float fogColFac = (dot(dir, omw.sunPos.xyz) + 1) / 2;
+        vec4 fogCol = lerp(hsv2rgb(lowH, lowS, lowV), hsv2rgb(sunH, sunS, sunV), fogColFac);
+
+        return lerp(col, fogCol, sky_angle);
+    }
+
+    void main() {
+        vec4 col = omw_Texture2D(omw_SamplerLastShader, omw_TexCoord);
+
+        vec3 wpos = wpos_at(omw_TexCoord);
+        float max_dist = distance(omw.eyePos.xyz, wpos);
+        vec3 dir = (wpos - omw.eyePos.xyz) / max_dist;
+
+
+		if (omw.isInterior) {
+        } else {
+
+			if (max_dist >= HORIZON * 0.9) {
+                //col = sky_blend(col, wpos, max_dist, dir);
+                //sky?
+			} else {
+                col = newfog(col, wpos, max_dist, dir);
+            }
+        }
+        omw_FragColor = col;
+    }
+
+}
+
+technique {
+    passes = main;
+    hdr = true;
+    flags = disable_underwater, disable_sunglare, disable_interiors;
+    pass_lights = true;
+}
